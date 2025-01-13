@@ -1,0 +1,52 @@
+name: Linting Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Set up Node.js for linting tools
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      # Install dependencies (assuming package.json is in the root)
+      - name: Install dependencies
+        run: npm install
+
+      # Run HTMLHint for linting HTML files
+      - name: Run HTMLHint
+        run: npx htmlhint '**/*.html'
+
+      # Run Stylelint for linting CSS files
+      - name: Run Stylelint
+        run: npx stylelint '**/*.css' '**/*.scss'
+
+      # Optionally, run tests if needed (add if you have testing)
+      - name: Run tests
+        run: npm test
+
+    # Optionally, add caching to speed up installs (example below)
+    # cache dependencies
+    # - name: Cache node modules
+    #   uses: actions/cache@v2
+    #   with:
+    #     path: ~/.npm
+    #     key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+    #     restore-keys: |
+    #       ${{ runner.os }}-node-modules-
